@@ -1,0 +1,117 @@
+// 引入外部样式文件，这里假设variables.module.scss中定义了各种颜色变量。
+@import './variables.module.scss';
+
+// 定义一个mixin用于创建不同颜色的按钮样式。$color参数表示按钮的颜色。
+@mixin colorBtn($color) {
+  // 设置按钮背景色为传入的颜色值。
+  background: $color;
+
+  // 当鼠标悬停在按钮上时，文本颜色变为传入的颜色值。
+  &:hover {
+    color: $color;
+
+    // 悬停状态下，按钮的伪元素:before和:after的背景色也变成传入的颜色值。
+    &:before,
+    &:after {
+      background: $color;
+    }
+  }
+}
+
+// 使用colorBtn mixin创建蓝色按钮，并从引入的文件中使用$blue颜色变量。
+.blue-btn {
+  @include colorBtn($blue)
+}
+
+// 使用colorBtn mixin创建浅蓝色按钮，并从引入的文件中使用$light-blue颜色变量。
+.light-blue-btn {
+  @include colorBtn($light-blue)
+}
+
+// 使用colorBtn mixin创建红色按钮，并从引入的文件中使用$red颜色变量。
+.red-btn {
+  @include colorBtn($red)
+}
+
+// 使用colorBtn mixin创建粉色按钮，并从引入的文件中使用$pink颜色变量。
+.pink-btn {
+  @include colorBtn($pink)
+}
+
+// 使用colorBtn mixin创建绿色按钮，并从引入的文件中使用$green颜色变量。
+.green-btn {
+  @include colorBtn($green)
+}
+
+// 使用colorBtn mixin创建蒂芙尼蓝按钮，并从引入的文件中使用$tiffany颜色变量。
+.tiffany-btn {
+  @include colorBtn($tiffany)
+}
+
+// 使用colorBtn mixin创建黄色按钮，并从引入的文件中使用$yellow颜色变量。
+.yellow-btn {
+  @include colorBtn($yellow)
+}
+
+// 定义pan-btn类，用于创建特定样式的按钮。
+.pan-btn {
+  font-size: 14px; // 设置字体大小为14像素。
+  color: #fff; // 设置文本颜色为白色。
+  padding: 14px 36px; // 设置内边距。
+  border-radius: 8px; // 设置圆角半径。
+  border: none; // 移除默认边框。
+  outline: none; // 移除点击后的轮廓线。
+  transition: 600ms ease all; // 设置所有属性的过渡效果持续时间600毫秒，缓动函数为ease。
+  position: relative; // 设置相对定位，使伪元素能够相对于按钮进行绝对定位。
+  display: inline-block; // 将按钮显示为行内块级元素。
+
+  // 鼠标悬停时的样式变化。
+  &:hover {
+    background: #fff; // 背景颜色变回白色。
+
+    // 悬停状态下，按钮的伪元素:before和:after宽度扩展到100%，实现动画效果。
+    &:before,
+    &:after {
+      width: 100%;
+      transition: 600ms ease all; // 设置伪元素的过渡效果持续时间和缓动函数。
+    }
+  }
+
+  // 定义按钮的伪元素:before和:after。
+  &:before,
+  &:after {
+    content: ''; // 伪元素的内容为空。
+    position: absolute; // 设置绝对定位。
+    top: 0; // 顶部位置为0。
+    right: 0; // 右侧位置为0。
+    height: 2px; // 设置高度为2像素。
+    width: 0; // 初始宽度为0。
+    transition: 400ms ease all; // 设置伪元素的过渡效果持续时间和缓动函数。
+  }
+
+  // 定义按钮的伪元素:after，覆盖:before的某些属性以实现不同的样式。
+  &::after {
+    right: inherit; // 继承右侧位置（保持不变）。
+    top: inherit; // 继承顶部位置（保持不变）。
+    left: 0; // 左侧位置为0。
+    bottom: 0; // 底部位置为0。
+  }
+}
+
+// 定义自定义按钮样式。
+.custom-button {
+  display: inline-block; // 将按钮显示为行内块级元素。
+  line-height: 1; // 设置行高为1。
+  white-space: nowrap; // 确保内容不会换行。
+  cursor: pointer; // 设置鼠标指针为手型，表明可交互。
+  background: #fff; // 设置背景颜色为白色。
+  color: #fff; // 设置文本颜色为白色。
+  -webkit-appearance: none; // 移除Webkit浏览器中的默认样式。
+  text-align: center; // 文本居中对齐。
+  box-sizing: border-box; // 设置盒模型为border-box，确保padding和border包含在width和height之内。
+  outline: 0; // 移除点击后的轮廓线。
+  margin: 0; // 移除外边距。
+  padding: 10px 15px; // 设置内边距。
+  font-size: 14px; // 设置字体大小为14像素。
+  border-radius: 4px; // 设置圆角半径。
+}
