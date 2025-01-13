@@ -1,6 +1,7 @@
 <template>
   <!-- 导航栏容器 -->
   <div class="navbar">
+    <Drawer v-model:visible="drawerVisible"></Drawer>
     <!-- 汉堡菜单按钮，用于在移动端或侧边栏关闭时显示/隐藏侧边栏 -->
     <hamburger
       id="hamburger-container"
@@ -27,44 +28,33 @@
     <div class="right-menu">
       <!-- 如果不是移动设备，则显示以下内容 -->
       <template v-if="appStore.device !== 'mobile'">
-        <!-- 头部搜索组件 -->
-        <!-- <header-search id="header-search" class="right-menu-item" /> -->
-
-        <!-- 源码地址提示 -->
-        <!-- <el-tooltip content="源码地址" effect="dark" placement="bottom">
-          <ruo-yi-git id="ruoyi-git" class="right-menu-item hover-effect" />
-        </el-tooltip> -->
-
-        <!-- 文档地址提示 -->
-        <!-- <el-tooltip content="文档地址" effect="dark" placement="bottom">
-          <ruo-yi-doc id="ruoyi-doc" class="right-menu-item hover-effect" />
-        </el-tooltip> -->
-
-        <!-- 全屏切换按钮 -->
-        <!-- <screenfull id="screenfull" class="right-menu-item hover-effect" /> -->
-
-        <!-- 主题模式切换 -->
-        <el-tooltip content="主题模式" effect="dark" placement="bottom">
-          <div
-            class="right-menu-item hover-effect theme-switch-wrapper"
-            @click="toggleTheme"
-          >
-            <!-- 根据当前是否为暗黑模式显示不同的图标 -->
-            <svg-icon v-if="settingsStore.isDark" icon-class="sunny" />
-            <svg-icon v-if="!settingsStore.isDark" icon-class="moon" />
-          </div>
-        </el-tooltip>
         <!-- 消息通知图标 -->
+        <img
+          :src="userStore.avatar"
+          class="yujingclass"
+          @click="
+            () => {
+              drawerVisible = !drawerVisible;
+            }
+          "
+        />
+        <div
+          class="ellipsis"
+          @click="
+            () => {
+              drawerVisible = !drawerVisible;
+            }
+          "
+        >
+          {{ longText }}
+        </div>
         <el-tooltip content="消息通知" effect="dark" placement="bottom">
           <div class="right-menu-item hover-effect notification-icon">
-            <el-icon class="bold-icon"><Bell /></el-icon>
+            <el-badge :value="3" class="item" type="warning">
+              <el-icon class="bold-icon"><Bell /></el-icon>
+            </el-badge>
           </div>
         </el-tooltip>
-
-        <!-- 布局大小选择 -->
-        <!-- <el-tooltip content="布局大小" effect="dark" placement="bottom">
-          <size-select id="size-select" class="right-menu-item hover-effect" />
-        </el-tooltip> -->
       </template>
 
       <!-- 用户头像和下拉菜单 -->
@@ -114,21 +104,21 @@ import { ElMessageBox } from "element-plus";
 import Breadcrumb from "@/components/Breadcrumb";
 import TopNav from "@/components/TopNav";
 import Hamburger from "@/components/Hamburger";
-import Screenfull from "@/components/Screenfull";
-import SizeSelect from "@/components/SizeSelect";
-import HeaderSearch from "@/components/HeaderSearch";
-import RuoYiGit from "@/components/RuoYi/Git";
-import RuoYiDoc from "@/components/RuoYi/Doc";
 
 // 引入pinia状态管理仓库
 import useAppStore from "@/store/modules/app";
 import useUserStore from "@/store/modules/user";
 import useSettingsStore from "@/store/modules/settings";
+import Drawer from "@/components/Drawer/index.vue";
 
 // 获取状态管理仓库实例
 const appStore = useAppStore();
 const userStore = useUserStore();
 const settingsStore = useSettingsStore();
+const longText = ref(
+  "预警信息：发现嫌疑人张三出现在XXX区域，请相关部门及时应对"
+);
+const drawerVisible = ref(false); // 定义初始布尔值
 
 // 定义方法来切换侧边栏
 function toggleSideBar() {
@@ -169,11 +159,6 @@ const emits = defineEmits(["setLayout"]);
 function setLayout() {
   emits("setLayout");
 }
-
-// 切换主题模式的方法
-function toggleTheme() {
-  settingsStore.toggleTheme();
-}
 </script>
 
 <style lang="scss" scoped>
@@ -183,7 +168,10 @@ function toggleTheme() {
   position: relative;
   background: var(--navbar-bg);
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
-
+  .item {
+    margin-top: 10px;
+    margin-right: 30px;
+  }
   .hamburger-container {
     line-height: 46px;
     height: 100%;
@@ -216,7 +204,12 @@ function toggleTheme() {
     height: 100%;
     line-height: 50px;
     display: flex;
-
+    margin-right: 9px;
+    .yujingclass {
+      width: 40px;
+      height: 40px;
+      margin-top: 5px;
+    }
     &:focus {
       outline: none;
     }
@@ -225,7 +218,7 @@ function toggleTheme() {
       display: flex;
       align-items: center; /* 垂直居中 */
       justify-content: center; /* 水平居中 */
-      padding: 0 8px;
+      // padding: 0 8px;
       height: 100%;
       font-size: 18px;
       color: var(--navbar-text);
@@ -254,6 +247,7 @@ function toggleTheme() {
       }
       &.notification-icon {
         margin-left: 3px; // 可根据需要调整间距
+        padding-bottom: 8px;
       }
       .bold-icon {
         svg {
@@ -282,14 +276,16 @@ function toggleTheme() {
         // padding: 0 15px;
         height: 100%;
         cursor: pointer;
+        padding-bottom: 7px;
         .admin-text {
           margin-left: 10px;
+          font-size: 12px;
         }
         .user-avatar {
           cursor: pointer;
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
+          width: 25px;
+          height: 25px;
+          border-radius: 50%;
         }
 
         i {
@@ -301,6 +297,16 @@ function toggleTheme() {
         }
       }
     }
+  }
+  .ellipsis {
+    white-space: nowrap; /* 防止文本换行 */
+    overflow: hidden; /* 隐藏溢出的内容 */
+    text-overflow: ellipsis; /* 溢出部分用省略号表示 */
+    width: 200px; /* 设置一个固定的宽度 */
+    margin-right: 12px;
+    font-size: 15px;
+    color: #faad14;
+    margin-left: 9px;
   }
 }
 </style>
