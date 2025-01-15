@@ -107,6 +107,47 @@ export const constantRoutes = [
     name: "DeviceManagement",
     redirect: "noRedirect",
   },
+  //系统管理
+  {
+    path: "/system-management",
+    component: Layout,
+    meta: {
+      title: "系统管理",
+      icon: "search",
+      alwaysShow: true,
+    }, // 设置标题和图标
+    children: [
+      {
+        path: "operationlog",
+        component: () => import("@/views/systemManagement/operationLog/index"),
+        name: "operationlog",
+        meta: { title: "操作日志", icon: "user" }, // 设置标题和图标
+      },
+      {
+        path: "rolemanagement",
+        component: () =>
+          import("@/views/systemManagement/roleManagement/index"),
+        name: "rolemanagement",
+        meta: { title: "角色管理", icon: "user" }, // 设置标题和图标
+      },
+      {
+        path: "accountmanagement",
+        component: () =>
+          import("@/views/systemManagement/accountManagement/index"),
+        name: "accountmanagement",
+        meta: { title: "账号管理", icon: "user" }, // 设置标题和图标
+      },
+      {
+        path: "gpudistribution",
+        component: () =>
+          import("@/views/systemManagement/gpuDistribution/index"),
+        name: "gpudistribution",
+        meta: { title: "GPU分配", icon: "user" }, // 设置标题和图标
+      },
+    ],
+    name: "SystemManagement",
+    redirect: "noRedirect",
+  },
   // // 实时检索
   // {
   //   path: "/real-time-search",

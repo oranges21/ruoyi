@@ -8,11 +8,6 @@
     <el-card style="max-width: 480px">
       <p v-for="o in 4" :key="o" class="text item">{{ "List item " + o }}</p>
     </el-card>
-    <div id="alertContainer" class="alert-container">
-      <div id="alertMessage" class="alert-message">
-        预警信息：发现嫌疑人张三...
-      </div>
-    </div>
   </div>
 </template>
 
@@ -448,35 +443,6 @@ getList();
     width: 30%;
     height: 103px;
     border: 1px solid red;
-  }
-}
-.alert-container {
-  position: relative;
-  display: inline-block;
-}
-
-.alert-message {
-  background-color: red;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 5px;
-  /* 初始状态下不应用闪烁效果 */
-}
-
-/* 添加一个专门用于闪烁的类 */
-.blink {
-  animation: blink 1s linear infinite;
-}
-
-@keyframes blink {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
   }
 }
 </style>
