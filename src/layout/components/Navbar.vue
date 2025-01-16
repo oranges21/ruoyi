@@ -1,7 +1,7 @@
 <template>
+  <Drawer v-model:visible="drawerVisible"></Drawer>
   <!-- 导航栏容器 -->
   <div class="navbar">
-    <Drawer v-model:visible="drawerVisible"></Drawer>
     <!-- 汉堡菜单按钮，用于在移动端或侧边栏关闭时显示/隐藏侧边栏 -->
     <hamburger
       id="hamburger-container"
@@ -25,7 +25,7 @@
     />
 
     <!-- 右侧菜单容器 -->
-    <div class="right-menu">
+    <div class="right-menu" id="yujing">
       <!-- 如果不是移动设备，则显示以下内容 -->
       <template v-if="appStore.device !== 'mobile'">
         <!-- 消息通知图标 -->
@@ -119,6 +119,23 @@ const longText = ref(
   "预警信息：发现嫌疑人张三出现在XXX区域，请相关部门及时应对"
 );
 const drawerVisible = ref(false); // 定义初始布尔值
+const yujing = ref(false); // 或者 false
+function updateAlertVisibility() {
+  const alertMessage = document.getElementById("yujing");
+  if (alertMessage) {
+    if (yujing.value) {
+      // 如果 yujing 为 true，则添加 'blink' 类以启用闪烁效果
+      alertMessage.classList.add("blink");
+    } else {
+      // 如果 yujing 不是 true，则移除 'blink' 类以禁用闪烁效果
+      alertMessage.classList.remove("blink");
+    }
+  }
+}
+
+onMounted(() => {
+  updateAlertVisibility();
+});
 
 // 定义方法来切换侧边栏
 function toggleSideBar() {
@@ -307,6 +324,22 @@ function setLayout() {
     font-size: 15px;
     color: #faad14;
     margin-left: 9px;
+  }
+}
+/* 添加一个专门用于闪烁的类 */
+.blink {
+  animation: blink 1s linear infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 </style>

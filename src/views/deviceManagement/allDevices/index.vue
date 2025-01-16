@@ -138,23 +138,10 @@ const filterNode = (value, data) => {
   if (!value) return true;
   return data.label.indexOf(value) !== -1;
 };
-// 假设这是从某个地方获取到的预警状态
-var yujing = true; // 或者 false
-function updateAlertVisibility() {
-  var alertMessage = document.getElementById("alertMessage");
-  console.log(alertMessage);
-  if (yujing) {
-    // 如果 yujing 为 true，则添加 'blink' 类以启用闪烁效果
-    alertMessage.classList.add("blink");
-  } else {
-    // 如果 yujing 不是 true，则移除 'blink' 类以禁用闪烁效果
-    alertMessage.classList.remove("blink");
-  }
-}
 
 // 当页面加载完成时调用函数更新预警显示
 onMounted(() => {
-  updateAlertVisibility();
+  // updateAlertVisibility();
 });
 
 // 如果你有一个方法可以实时更新 yujing 的值，

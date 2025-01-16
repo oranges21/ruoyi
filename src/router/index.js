@@ -63,7 +63,7 @@ export const constantRoutes = [
   },
   // 首页路由，作为根路由，重定向到 /index
   {
-    path: "",
+    path: "/",
     component: Layout,
     redirect: "/device-management/alldevices",
   },
