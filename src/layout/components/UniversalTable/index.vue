@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <el-table :data="data" style="width: 100%">
+  <el-scrollbar>
+    <el-table :data="data" style="width: 100%; height: 280px">
       <!-- 多选框 -->
       <el-table-column
         v-if="showCheckbox"
@@ -13,7 +13,7 @@
         v-for="(column, index) in columns"
         :key="index"
         :label="column.label"
-        :width="column.width"
+        :min-width="column.width"
         align="center"
       >
         <template #default="scope">
@@ -37,31 +37,10 @@
         </template>
       </el-table-column>
     </el-table>
-
-    <!-- 分页组件 -->
-    <!-- <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="currentPage"
-      :page-size="pageSize"
-      :total="total"
-      layout="total, sizes, prev, pager, next, jumper"
-      :page-sizes="[10, 20, 30, 40]"
-    /> -->
-  </div>
+  </el-scrollbar>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-// import {
-//   ElTable,
-//   ElTableColumn,
-//   ElPagination,
-//   ElDropdown,
-//   ElDropdownMenu,
-//   ElDropdownItem,
-// } from "element-plus";
-
 const props = defineProps({
   // 表格列配置
   columns: Array,
@@ -72,29 +51,16 @@ const props = defineProps({
   // 总数
   // total: Number,
 });
-
-// 定义响应式数据
-// const currentPage = ref(1);
-// const pageSize = ref(10);
-
-// 计算属性：分页后的数据
-// const paginatedData = computed(() => {
-//   const start = (currentPage.value - 1) * pageSize.value;
-//   const end = start + pageSize.value;
-//   return props.data.slice(start, end);
-// });
-
 // 方法定义
 const handleIconClick = (row) => {
   console.log("Icon clicked", row);
 };
-
-// const handleSizeChange = (size) => {
-//   pageSize.value = size;
-//   currentPage.value = 1; // 切换每页数量时重置到第一页
-// };
-
-// const handleCurrentChange = (page) => {
-//   currentPage.value = page;
-// };
 </script>
+
+<style scoped>
+:deep(.el-table__body .el-table__row td:last-child) {
+  /* font-size: 16px; 字体大小 */
+  color: #66b1ff; /* 字体颜色 */
+  cursor: pointer;
+}
+</style>

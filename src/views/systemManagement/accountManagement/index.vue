@@ -7,16 +7,20 @@
       v-model="queryConditions"
       @search="handleSearch"
     />
-    <el-card>
+    <el-card class="table-contanier">
+      <div class="button-contanier">
+        <el-button type="primary" @click="handleAdd">新建</el-button>
+        <el-button @click="handleDelet">批量删除</el-button>
+      </div>
       <UniversalTable
+        class="table"
         :columns="tableColumns"
-        :data="tableData"
-        :total="totalItems"
+        :data="paginatedData"
         :show-checkbox="true"
       >
         <template #action="{ row }">
           <!-- 自定义操作栏 -->
-          <el-dropdown v-if="row.actions && row.actions.length > 2">
+          <el-dropdown v-if="row.actions && row.actions.length > 3">
             <span class="el-dropdown-link"
               >更多<i class="el-icon-arrow-down el-icon--right"></i
             ></span>
@@ -40,14 +44,21 @@
           </el-row>
         </template>
       </UniversalTable>
+      <pagination
+        :total="totalItems"
+        v-model:currentPage="currentPage"
+        v-model:pageSize="pageSize"
+        @pagination="fetchData"
+      />
     </el-card>
   </div>
 </template>
 
 <script setup>
+import { ref, computed, watch } from "vue";
 import UniversalTable from "@/layout/components/UniversalTable/index.vue";
 import QueryForm from "@/layout/components/SearchBar";
-
+import Pagination from "@/layout/components/Pagination";
 const minWidth = "143px";
 // 查询条件配置
 const queryItems = [
@@ -70,51 +81,161 @@ const handleSearch = (conditions) => {
   // 这里可以调用API进行实际的查询操作
 };
 const tableColumns = [
-  { prop: "date", label: "日期", width: "150" },
-  { prop: "name", label: "姓名", width: "120" },
-  { prop: "iconClass", label: "图标", isIcon: true }, // 假设这是icon列
+  { prop: "id", label: "编号", width: "80" },
+  { prop: "account", label: "账号", width: "110" },
+  { prop: "name", label: "姓名", width: "110" },
+  { prop: "email", label: "邮箱", width: "120" },
+  { prop: "adddate", label: "添加时间", width: "120" },
+  { prop: "logoutdata", label: "最后登录", width: "120" },
+  { prop: "useing", label: "是否启用", width: "110" },
+  // { prop: "iconClass", label: "图标", isIcon: true }, // 假设这是icon列
   // ...其他列配置
 ];
 
-const tableData = [
+const rawTableData = [
   {
-    date: "2025-01-01",
-    name: "张三",
-    iconClass: "Edit", // 假设这是成功状态的图标
-    actions: ["编辑", "删除"],
+    id: "1",
+    account: "test",
+    name: "测试账号",
+    email: "test@qq.com",
+    adddate: "2025-01-01",
+    logoutdata: "2025-01-01",
+    useing: "是",
+    // date: "2025-01-01",
+    // iconClass: "Edit", // 假设这是成功状态的图标
+    actions: ["分配角色", "编辑", "删除"],
   },
   {
-    date: "2025-01-02",
-    name: "李四",
-    iconClass: "Edit", // 假设这是警告状态的图标
-    actions: ["编辑"],
+    id: "1",
+    account: "test",
+    name: "测试账号",
+    email: "test@qq.com",
+    adddate: "2025-01-01",
+    logoutdata: "2025-01-01",
+    useing: "是",
+    // date: "2025-01-01",
+    // iconClass: "Edit", // 假设这是成功状态的图标
+    actions: ["分配角色", "编辑", "删除"],
   },
   {
-    date: "2025-01-03",
-    name: "王五",
-    iconClass: "Edit", // 假设这是错误状态的图标
-    actions: [],
+    id: "1",
+    account: "test",
+    name: "测试账号",
+    email: "test@qq.com",
+    adddate: "2025-01-01",
+    logoutdata: "2025-01-01",
+    useing: "是",
+    // date: "2025-01-01",
+    // iconClass: "Edit", // 假设这是成功状态的图标
+    actions: ["分配角色", "编辑", "删除"],
   },
   {
-    date: "2025-01-04",
-    name: "赵六",
-    iconClass: "Edit", // 假设这是信息状态的图标
-    actions: ["查看详情", "编辑", "删除"],
+    id: "1",
+    account: "test",
+    name: "测试账号",
+    email: "test@qq.com",
+    adddate: "2025-01-01",
+    logoutdata: "2025-01-01",
+    useing: "是",
+    // date: "2025-01-01",
+    // iconClass: "Edit", // 假设这是成功状态的图标
+    actions: ["分配角色", "编辑", "删除"],
   },
   {
-    date: "2025-01-05",
-    name: "孙七",
-    iconClass: "Edit", // 假设这是确认状态的图标
-    actions: ["编辑", "删除"],
+    id: "1",
+    account: "test",
+    name: "测试账号",
+    email: "test@qq.com",
+    adddate: "2025-01-01",
+    logoutdata: "2025-01-01",
+    useing: "是",
+    // date: "2025-01-01",
+    // iconClass: "Edit", // 假设这是成功状态的图标
+    actions: ["分配角色", "编辑", "删除"],
+  },
+  {
+    id: "1",
+    account: "test",
+    name: "测试账号",
+    email: "test@qq.com",
+    adddate: "2025-01-01",
+    logoutdata: "2025-01-01",
+    useing: "是",
+    // date: "2025-01-01",
+    // iconClass: "Edit", // 假设这是成功状态的图标
+    actions: ["分配角色", "编辑", "删除"],
+  },
+  {
+    id: "1",
+    account: "test",
+    name: "测试账号",
+    email: "test@qq.com",
+    adddate: "2025-01-01",
+    logoutdata: "2025-01-01",
+    useing: "是",
+    // date: "2025-01-01",
+    // iconClass: "Edit", // 假设这是成功状态的图标
+    actions: ["分配角色", "编辑", "删除"],
+  },
+  {
+    id: "1",
+    account: "test",
+    name: "测试账号",
+    email: "test@qq.com",
+    adddate: "2025-01-01",
+    logoutdata: "2025-01-01",
+    useing: "是",
+    // date: "2025-01-01",
+    // iconClass: "Edit", // 假设这是成功状态的图标
+    actions: ["分配角色", "编辑", "删除"],
+  },
+  {
+    id: "1",
+    account: "test",
+    name: "测试账号",
+    email: "test@qq.com",
+    adddate: "2025-01-01",
+    logoutdata: "2025-01-01",
+    useing: "是",
+    // date: "2025-01-01",
+    // iconClass: "Edit", // 假设这是成功状态的图标
+    actions: ["分配角色", "编辑", "删除"],
   },
 ];
 
-const totalItems = 100; // 总条目数
+const totalItems = ref(rawTableData.length); // 总条目数
+
+//新增事件
+const handleAdd = () => {};
+//批量删除事件
+const handleDelet = () => {};
+// 分页相关的响应式数据
+const currentPage = ref(1);
+const pageSize = ref(10);
+
+// 计算属性：分页后的数据
+const paginatedData = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value;
+  const end = start + pageSize.value;
+  return rawTableData.slice(start, end);
+});
+
+// 获取数据的方法（模拟数据请求）
+const fetchData = ({ currentPage, pageSize }) => {
+  // 在这里可以进行实际的数据获取逻辑，例如从服务器拉取分页数据
+  console.log(`Fetching page ${currentPage} with size ${pageSize}`);
+  // 更新当前页面和每页大小
+  currentPage.value = currentPage;
+  pageSize.value = pageSize;
+};
+
+// 监听总条目数变化时重新获取数据
+watch(
+  () => totalItems.value,
+  () => {
+    fetchData({ currentPage: currentPage.value, pageSize: pageSize.value });
+  }
+);
 </script>
 
-<style lang="scss" scoped>
-.el-card {
-  margin: 15px;
-  border-radius: 5px;
-}
-</style>
+<style lang="scss" scoped></style>
