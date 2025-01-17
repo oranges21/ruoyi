@@ -28,16 +28,16 @@ const useUserStore = defineStore("user", {
     login(userInfo) {
       const username = userInfo.username.trim(); // 移除用户名前后空白。
       const password = userInfo.password; // 获取密码。
-      const code = userInfo.code; // 获取验证码。
-      const uuid = userInfo.uuid; // 获取UUID。
+      console.log("userstore");
 
       // 返回一个Promise对象，以便调用者可以处理异步结果。
       return new Promise((resolve, reject) => {
         // 调用API进行登录，并传递用户名、密码、验证码和UUID。
-        login(username, password, code, uuid)
+        login(username, password)
           .then((res) => {
-            setToken(res.token); // 设置Token到本地存储。
-            this.token = res.token; // 更新store中的token状态。
+            console.log(res.data.token);
+            setToken(res.data.token); // 设置Token到本地存储。
+            this.token = res.data.token; // 更新store中的token状态。
             resolve(); // 解决Promise，表示登录成功。
           })
           .catch((error) => {

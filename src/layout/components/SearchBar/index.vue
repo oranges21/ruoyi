@@ -15,7 +15,7 @@
         @submit.prevent="handleSubmit"
       >
         <!-- 使用 el-row 和 el-col 来创建响应式栅格布局 -->
-        <el-row :gutter="20">
+        <el-row :gutter="0">
           <!-- 设置列之间的间距 -->
           <!-- 遍历 queryItems 数组，生成多个表单项 -->
           <!-- :key="index"                            确保每个元素有唯一的 key  -->
@@ -23,7 +23,7 @@
           <el-col
             v-for="(item, index) in items"
             :key="index"
-            :span="item.span || 6"
+            :span="item.span"
             :xs="24"
             :sm="12"
             :md="8"
@@ -52,7 +52,7 @@
               </component>
             </el-form-item>
           </el-col>
-          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6">
+          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" :span="3">
             <el-form-item>
               <el-button type="primary" native-type="submit">搜索</el-button>
               <!-- 查询按钮 -->
@@ -64,6 +64,13 @@
 
         <!-- 操作按钮：查询和重置 -->
       </el-form>
+      <el-button
+        class="button"
+        type="primary"
+        native-type="submit"
+        v-if="isbutton"
+        >下载日志</el-button
+      >
     </el-card>
   </div>
 </template>
@@ -84,6 +91,10 @@ const props = defineProps({
   minWidth: {
     type: String,
     default: "143px",
+  },
+  isbutton: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -151,8 +162,12 @@ const handleReset = () => {
 .el-card {
   margin: 15px;
   border-radius: 5px;
-  .query-form {
-    /* 添加一些基本样式 */
+  padding: 0px;
+  position: relative;
+  .button {
+    position: absolute;
+    top: 23px;
+    right: 16px;
   }
 }
 
@@ -162,7 +177,7 @@ const handleReset = () => {
     margin-bottom: 15px; /* 在小屏幕上增加间距 */
   }
 }
-:deep(.el-form .el-form-item__label) {
-  // min-width: 80px;
+:deep(.el-card__body) {
+  padding: 23px 20px 7px 20px !important;
 }
 </style>

@@ -43,37 +43,6 @@
         </el-input>
       </el-form-item>
 
-      <!-- 验证码输入框（仅当验证码功能开启时显示） -->
-      <el-form-item prop="code" v-if="captchaEnabled">
-        <el-input
-          v-model="loginForm.code"
-          size="large"
-          auto-complete="off"
-          placeholder="验证码"
-          style="width: 63%"
-          @keyup.enter="handleLogin"
-        >
-          <template #prefix>
-            <!-- 自定义前缀图标 -->
-            <svg-icon
-              icon-class="validCode"
-              class="el-input__icon input-icon"
-            />
-          </template>
-        </el-input>
-        <div class="login-code">
-          <img :src="codeUrl" @click="getCode" class="login-code-img" />
-          <!-- 点击刷新验证码 -->
-        </div>
-      </el-form-item>
-
-      <!-- 记住密码选项 -->
-      <el-checkbox
-        v-model="loginForm.rememberMe"
-        style="margin: 0px 0px 25px 0px"
-        >记住密码</el-checkbox
-      >
-
       <!-- 登录按钮 -->
       <el-form-item style="width: 100%">
         <el-button
@@ -106,7 +75,7 @@
 </template>
 
 <script setup>
-import { getCodeImg } from "@/api/login"; // 导入获取验证码图片的API
+// import { getCodeImg } from "@/api/login"; // 导入获取验证码图片的API
 import Cookies from "js-cookie"; // 导入管理Cookies的库
 import { encrypt, decrypt } from "@/utils/jsencrypt"; // 导入加密解密工具
 import useUserStore from "@/store/modules/user"; // 导入用户仓库
@@ -120,20 +89,15 @@ const { proxy } = getCurrentInstance(); // 获取当前组件实例
 // 定义响应式变量
 const loginForm = ref({
   username: "admin", // 默认用户名
-  password: "admin123", // 默认密码
-  rememberMe: false, // 是否记住密码
-  code: "", // 验证码
-  uuid: "", // 验证码唯一标识符
+  password: "123456", // 默认密码
 });
 
 // 定义表单验证规则
 const loginRules = {
   username: [{ required: true, trigger: "blur", message: "请输入您的账号" }],
   password: [{ required: true, trigger: "blur", message: "请输入您的密码" }],
-  code: [{ required: true, trigger: "change", message: "请输入验证码" }],
 };
 
-const codeUrl = ref(""); // 验证码图片URL
 const loading = ref(false); // 登录按钮加载状态
 const captchaEnabled = ref(true); // 是否启用验证码功能
 const register = ref(false); // 是否显示注册链接
@@ -156,84 +120,60 @@ function handleLogin() {
     console.log("valid:", valid);
     if (valid) {
       loading.value = true; // 设置加载状态为true
-      if (loginForm.value.rememberMe) {
-        // 如果选择了记住密码
-        Cookies.set("username", loginForm.value.username, { expires: 30 }); // 设置用户名cookie
-        Cookies.set("password", encrypt(loginForm.value.password), {
-          expires: 30,
-        }); // 加密并设置密码cookie
-        Cookies.set("rememberMe", loginForm.value.rememberMe, { expires: 30 }); // 设置记住密码状态cookie
-      } else {
-        Cookies.remove("username"); // 否则移除用户名cookie
-        Cookies.remove("password"); // 移除密码cookie
-        Cookies.remove("rememberMe"); // 移除记住密码状态cookie
-      }
       // 调用用户仓库的登录方法
       userStore
         .login(loginForm.value)
         .then(() => {
+          console.log("登录成功");
+          router.replace("/");
           // 获取当前路由的查询参数（query parameters），这些是在URL中以问号后面跟随的形式出现的键值对。
-          const query = route.query;
-          console.log("query:", query);
-
-          // 使用 Object.keys() 获取所有查询参数的键名，并通过 reduce() 方法遍历这些键名。
-          // reduce() 方法用于累积一个初始值（这里是空对象 {}），并返回累积的结果。
-          // 目的是创建一个新的对象 otherQueryParams，它包含了除 'redirect' 外的所有查询参数。
-          const otherQueryParams = Object.keys(query).reduce((acc, cur) => {
-            // 如果当前键名不是 'redirect'，则将该键及其对应的值添加到累积对象 acc 中。
-            if (cur !== "redirect") {
-              acc[cur] = query[cur]; // 将非 'redirect' 参数复制到新的对象中
-            }
-            return acc; // 返回累积的对象
-          }, {});
-          console.log("otherQueryParams:", otherQueryParams);
-          // 根据重定向路径或默认路径进行跳转：
-          // - 如果存在 redirect.value，则使用它的值作为目标路径；
-          // - 否则，默认跳转到根路径 '/'。
-          // 在跳转时，保留其他查询参数（即不包括 'redirect' 的那些）。
-          router.push({
-            path: redirect.value || "/", // 设置跳转的目标路径
-            query: otherQueryParams, // 传递过滤后的查询参数
-          });
+          // const query = route.query;
+          // console.log("query:", query);
+          // // 使用 Object.keys() 获取所有查询参数的键名，并通过 reduce() 方法遍历这些键名。
+          // // reduce() 方法用于累积一个初始值（这里是空对象 {}），并返回累积的结果。
+          // // 目的是创建一个新的对象 otherQueryParams，它包含了除 'redirect' 外的所有查询参数。
+          // const otherQueryParams = Object.keys(query).reduce((acc, cur) => {
+          //   // 如果当前键名不是 'redirect'，则将该键及其对应的值添加到累积对象 acc 中。
+          //   if (cur !== "redirect") {
+          //     acc[cur] = query[cur]; // 将非 'redirect' 参数复制到新的对象中
+          //   }
+          //   return acc; // 返回累积的对象
+          // }, {});
+          // console.log("otherQueryParams:", otherQueryParams);
+          // // 根据重定向路径或默认路径进行跳转：
+          // // - 如果存在 redirect.value，则使用它的值作为目标路径；
+          // // - 否则，默认跳转到根路径 '/'。
+          // // 在跳转时，保留其他查询参数（即不包括 'redirect' 的那些）。
+          // router.push({
+          //   path: redirect.value || "/", // 设置跳转的目标路径
+          //   query: otherQueryParams, // 传递过滤后的查询参数
+          // });
         })
         .catch(() => {
           loading.value = false; // 设置加载状态为false
+          console.log("登陆失败");
           if (captchaEnabled.value) {
-            getCode(); // 重新获取验证码
+            // getCode(); // 重新获取验证码
           }
         });
     }
   });
 }
-
-// 获取验证码图片
-function getCode() {
-  getCodeImg().then((res) => {
-    captchaEnabled.value =
-      res.captchaEnabled === undefined ? true : res.captchaEnabled;
-    if (captchaEnabled.value) {
-      codeUrl.value = "data:image/gif;base64," + res.img; // 设置验证码图片URL
-      loginForm.value.uuid = res.uuid; // 设置验证码唯一标识符
-    }
-  });
-}
-
 // 从Cookies读取保存的登录信息
-function getCookie() {
-  const username = Cookies.get("username");
-  const password = Cookies.get("password");
-  const rememberMe = Cookies.get("rememberMe");
-  loginForm.value = {
-    username: username === undefined ? loginForm.value.username : username,
-    password:
-      password === undefined ? loginForm.value.password : decrypt(password),
-    rememberMe: rememberMe === undefined ? false : Boolean(rememberMe),
-  };
-}
+// function getCookie() {
+//   const username = Cookies.get("username");
+//   const password = Cookies.get("password");
+//   const rememberMe = Cookies.get("rememberMe");
+//   loginForm.value = {
+//     username: username === undefined ? loginForm.value.username : username,
+//     password:
+//       password === undefined ? loginForm.value.password : decrypt(password),
+//     rememberMe: rememberMe === undefined ? false : Boolean(rememberMe),
+//   };
+// }
 
 // 页面加载时调用获取验证码和读取Cookies
-getCode();
-getCookie();
+// getCookie();
 </script>
 
 <style lang="scss" scoped>
